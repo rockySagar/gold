@@ -25,8 +25,8 @@ module.exports = class Contract {
 	async create(req) {
 		const params = req.body
 		try {
-            // console.log("--------------------");
-			const createdcontract = await contractHelper.create(params,req.decodedToken._id)
+			// console.log("--------------------");
+			const createdcontract = await contractHelper.create(params, req.decodedToken._id)
 			return createdcontract
 		} catch (error) {
 			return error
@@ -79,7 +79,7 @@ module.exports = class Contract {
 		}
 	}
 
-    	/**
+	/**
 	 * Contract list
 	 * @method
 	 * @name list
@@ -94,13 +94,13 @@ module.exports = class Contract {
 	async list(req) {
 		try {
 			const ContractDetails = await contractHelper.list(
-				req.decodedToken._id,
+				// req.decodedToken._id,
 				req.params.id,
 				req.pageNo,
 				req.pageSize,
 				req.searchText,
-				req.query.status,
-                req.query.type ? req.query.type : "" 
+				req.query.status
+				// req.query.type ? req.query.type : ""
 			)
 			return ContractDetails
 		} catch (error) {
@@ -109,12 +109,10 @@ module.exports = class Contract {
 	}
 	async generatePdf(req) {
 		try {
-			const ContractDetails = await contractHelper.generatePdf(req.params.id);
+			const ContractDetails = await contractHelper.generatePdf(req.params.id)
 			return ContractDetails
 		} catch (error) {
 			return error
 		}
 	}
-
-	
 }

@@ -13,22 +13,17 @@ const contractData = require('@db/contract/queries')
 const ObjectId = require('mongoose').Types.ObjectId
 
 const pdf = require('@generics/pdf')
-let ejs = require("ejs");
-
-
+let ejs = require('ejs')
 
 module.exports = class contractHelper {
-
-
-	static async create(bodyData,loggedInUserId) {
+	static async create(bodyData, loggedInUserId) {
 		try {
-		
-			bodyData['userId'] = ObjectId(loggedInUserId);
+			bodyData['userId'] = ObjectId(loggedInUserId)
 			let sales = await contractData.create(bodyData)
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
 				message: apiResponses.sales_CREATED_SUCCESSFULLY,
-				result: sales
+				result: sales,
 			})
 		} catch (error) {
 			throw error
@@ -38,7 +33,7 @@ module.exports = class contractHelper {
 	static async update(bodyData) {
 		try {
 			const filter = {
-				_id: ObjectId(bodyData._id)
+				_id: ObjectId(bodyData._id),
 			}
 			const result = await contractData.updateOne(filter, bodyData)
 			if (result === 'sales_NOT_FOUND') {
@@ -73,7 +68,7 @@ module.exports = class contractHelper {
 	static async read(id) {
 		try {
 			const filter = {
-				_id: ObjectId(id)
+				_id: ObjectId(id),
 			}
 			const data = await contractData.findOne(filter)
 			if (!data) {
@@ -96,29 +91,22 @@ module.exports = class contractHelper {
 
 	static async generatePdf(id) {
 		try {
-			
-			
-			let html = await ejs.renderFile(__basedir+"/template/contract.ejs", { data: { name: "aa" } } );
-			
+			let contractDetails = await contractData.findOne({ _id: id })
+			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
-// console.log(html,"html",__basedir);
+			// console.log(html,"html",__basedir);
 
-			let pdfcon = await pdf.generatePdf(html.toString());
-			
+			let pdfcon = await pdf.generatePdf(html.toString())
+
 			return common.successResponse({
 				statusCode: 200,
-				message: "PDF generated succesffully",
-				result: { pdf:true,data: pdfcon },
-			});
-
+				message: 'PDF generated succesffully',
+				result: { pdf: true, data: pdfcon },
+			})
 		} catch (error) {
 			throw error
 		}
 	}
-
-
-
-
 
 	/**
 	 * saless list.
@@ -131,19 +119,21 @@ module.exports = class contractHelper {
 	 * @returns {JSON} - List of sessions
 	 */
 
-	static async list(loggedInUserId,organisationId, page, limit, search, status, type) {
+	static async list(customerId, page, limit, search, status) {
 		try {
-
 			let arrayOfStatus = []
 			if (status && status != '') {
 				arrayOfStatus = status.split(',')
 			}
 
 			let filters = {}
-			filters['organisationId'] = ObjectId(organisationId);
-			if (type == "my") {
-				filters['userId'] = ObjectId(loggedInUserId);
-			}
+			// filters['organisationId'] = (organisationId);
+			// if (type == "my") {
+			filters['customerId'] = ObjectId(customerId)
+			// filters['userId'] = (userId);
+			// }
+
+			// console.log("organisationId",organisationId);
 
 			// if (arrayOfStatus.length > 0) {
 			// 	if (
@@ -168,7 +158,7 @@ module.exports = class contractHelper {
 			// 	}
 			// }
 
-			console.log("filters",filters);
+			console.log('filters', filters)
 			const salesDetails = await contractData.findAll(page, limit, search, filters)
 			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
 				return common.failureResponse({
@@ -188,5 +178,4 @@ module.exports = class contractHelper {
 			throw error
 		}
 	}
-
 }

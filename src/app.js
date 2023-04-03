@@ -1,6 +1,6 @@
 /**
  * name : app.js
- * author : Rakesh Kumar   
+ * author : Rakesh Kumar
  * Date : 29-Sep-2021
  * Description : Start file of a user service
  */
@@ -12,7 +12,7 @@ const expressFileUpload = require('express-fileupload')
 const path = require('path')
 require('dotenv').config({ path: './.env' })
 
-global.__basedir = __dirname;
+global.__basedir = __dirname
 
 let environmentData = require('./envVariables')()
 
@@ -37,14 +37,11 @@ app.get(process.env.API_DOC_URL, function (req, res) {
 app.use(bodyParser.urlencoded({ extended: true, limit: '50MB' }))
 app.use(bodyParser.json({ limit: '50MB' }))
 
-app.use(express.static('public'))
+app.use('/public', express.static('public'))
 
 /* Logs request info if environment is configured to enable log */
 if (process.env.ENABLE_LOG === 'true') {
 	app.all('*', (req, res, next) => {
-
-		
-
 		console.log('***User Service Logs Starts Here***')
 		console.log('Request Type %s for %s on %s from ', req.method, req.url, new Date())
 		console.log('Request Headers: ', req.headers)
