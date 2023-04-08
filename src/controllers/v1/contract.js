@@ -49,7 +49,17 @@ module.exports = class Contract {
 	async update(req) {
 		const params = req.body
 		try {
-			const updatedcontract = await contractHelper.update(params)
+			const updatedcontract = await contractHelper.update(params, req.params.id)
+			return updatedcontract
+		} catch (error) {
+			return error
+		}
+	}
+
+	async addInstallments(req) {
+		const params = req.body
+		try {
+			const updatedcontract = await contractHelper.addInstallments(params, req.params.id)
 			return updatedcontract
 		} catch (error) {
 			return error

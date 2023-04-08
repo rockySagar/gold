@@ -9,17 +9,17 @@
 const httpStatusCode = require('@generics/http-status')
 const apiResponses = require('@constants/api-responses')
 const common = require('@constants/common')
-const contractData = require('@db/contract/queries')
+const savingsData = require('@db/savings/queries')
 const ObjectId = require('mongoose').Types.ObjectId
 
 const pdf = require('@generics/pdf')
 let ejs = require('ejs')
 
-module.exports = class contractHelper {
+module.exports = class savingsHelper {
 	static async create(bodyData, loggedInUserId) {
 		try {
 			bodyData['userId'] = ObjectId(loggedInUserId)
-			let sales = await contractData.create(bodyData)
+			let sales = await savingsData.create(bodyData)
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
 				message: apiResponses.sales_CREATED_SUCCESSFULLY,
@@ -35,17 +35,17 @@ module.exports = class contractHelper {
 			const filter = {
 				_id: ObjectId(id),
 			}
-			const result = await contractData.updateOne(filter, bodyData)
-			if (result === 'CONTRACT_NOT_FOUND') {
+			const result = await savingsData.updateOne(filter, bodyData)
+			if (result === 'SAVINGS_NOT_FOUND') {
 				return common.failureResponse({
-					message: 'Contract failed to update',
+					message: 'Savings failed to update',
 					statusCode: httpStatusCode.bad_request,
 					responseCode: 'CLIENT_ERROR',
 				})
 			}
 			return common.successResponse({
 				statusCode: httpStatusCode.accepted,
-				message: 'Contract update successfully',
+				message: 'Savings update successfully',
 			})
 		} catch (error) {
 			throw error
@@ -59,10 +59,10 @@ module.exports = class contractHelper {
 			}
 			bodyData['paidAt'] = new Date().toISOString()
 
-			const result = await contractData.updateOne(filter, { $push: { installments: bodyData } })
-			if (result === 'CONTRACT_NOT_FOUND') {
+			const result = await savingsData.updateOne(filter, { $push: { installments: bodyData } })
+			if (result === 'SAVINGS_NOT_FOUND') {
 				return common.failureResponse({
-					message: 'Contract failed to update',
+					message: 'Savings failed to update',
 					statusCode: httpStatusCode.bad_request,
 					responseCode: 'CLIENT_ERROR',
 				})
@@ -94,7 +94,7 @@ module.exports = class contractHelper {
 			const filter = {
 				_id: ObjectId(id),
 			}
-			const data = await contractData.findOne(filter)
+			const data = await savingsData.findOne(filter)
 			if (!data) {
 				return common.failureResponse({
 					message: apiResponses.SALES_NOT_FOUND,
@@ -115,8 +115,8 @@ module.exports = class contractHelper {
 
 	static async generatePdf(id) {
 		try {
-			let contractDetails = await contractData.findOne({ _id: id })
-			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
+			let savingsDetails = await savingsData.findOne({ _id: id })
+			let html = await ejs.renderFile(__basedir + '/template/savings.ejs', { data: savingsDetails })
 
 			// console.log(html,"html",__basedir);
 
@@ -183,7 +183,7 @@ module.exports = class contractHelper {
 			// }
 
 			console.log('filters', filters)
-			const salesDetails = await contractData.findAll(page, limit, search, filters)
+			const salesDetails = await savingsData.findAll(page, limit, search, filters)
 			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
 				return common.failureResponse({
 					message: apiResponses.SALES_NOT_FOUND,

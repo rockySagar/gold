@@ -24,7 +24,7 @@ module.exports = class FilesHelper {
 	 */
 	static async getSignedUrl(fileName, _id, dynamicPath) {
 		try {
-			let destFilePath
+			let destFilePath = ''
 			if (dynamicPath != '') {
 				destFilePath = dynamicPath + '/' + fileName
 			} else {
