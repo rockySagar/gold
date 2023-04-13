@@ -79,17 +79,19 @@ module.exports = class AccountHelper {
 				console.log('orgInfo', orgInfo)
 
 				if (orgInfo) {
-					bodyData['password'] ="a,8y234982y34sjdbkjasnd###@!1`203994u0";
+					bodyData['password'] = 'a,8y234982y34sjdbkjasnd###@!1`203994u0'
 
 					bodyData.password = utilsHelper.hashPassword(bodyData.password)
 					bodyData.mobile = {
 						number: mobile,
 						verified: false,
 					}
+
+					let count = await usersData.count({})
+					bodyData['userId'] = count + 1
+
 					await usersData.createUser(bodyData)
 				} else {
-					console.log('orgInfo-------------')
-
 					return common.failureResponse({
 						message: apiResponses.ORGANISATION_NOT_FOUND,
 						statusCode: httpStatusCode.not_acceptable,
@@ -153,7 +155,7 @@ module.exports = class AccountHelper {
 
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
-				message: apiResponses.USER_CREATED_SUCCESSFULLY,
+				message: 'Customer added successfully',
 				result,
 			})
 		} catch (error) {
@@ -189,6 +191,7 @@ module.exports = class AccountHelper {
 				},
 				projection
 			)
+			console.log('user', user)
 			if (!user) {
 				return common.failureResponse({
 					message: apiResponses.EMAIL_ID_NOT_REGISTERED,
@@ -252,9 +255,10 @@ module.exports = class AccountHelper {
 			)
 
 			/* Mongoose schema is in strict mode, so can not delete password directly */
-			user = {
-				...user._doc,
-			}
+			// user = {
+			// 	...user._doc,
+			// }
+			console.log('user', user)
 			delete user.password
 			const result = {
 				access_token: accessToken,
@@ -788,21 +792,23 @@ module.exports = class AccountHelper {
 	 * @param {String} search - search field.
 	 * @returns {JSON} - List of users
 	 */
-	static async list(page,limit,organisationId,search) {
+	static async list(page, limit, organisationId, search, type) {
 		try {
-			
-				const users = await usersData.searchUsers(
-					page,limit,search,
-					{	
-					  	organisationId:ObjectId(organisationId),
-					}
-				)
+			let filter = {
+				organisationId: ObjectId(organisationId),
+			}
 
-				return common.successResponse({
-					statusCode: httpStatusCode.ok,
-					message: apiResponses.USERS_FETCHED_SUCCESSFULLY,
-					result: users,
-				})
+			if (type) {
+				filter['type'] = type
+			}
+
+			const users = await usersData.searchUsers(page, limit, search, filter)
+
+			return common.successResponse({
+				statusCode: httpStatusCode.ok,
+				message: apiResponses.USERS_FETCHED_SUCCESSFULLY,
+				result: users,
+			})
 		} catch (error) {
 			throw error
 		}

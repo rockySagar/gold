@@ -237,10 +237,10 @@ module.exports = class Account {
 			const result = await accountHelper.list(
 				req.pageNo,
 				req.pageSize,
-				req.params.id, 
+				req.params.id,
 				req.searchText,
-				req.query.type
-				)
+				req.query.type ? req.query.type : ''
+			)
 			return result
 		} catch (error) {
 			return error

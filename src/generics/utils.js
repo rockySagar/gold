@@ -17,9 +17,8 @@ const s3 = new S3({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 	signatureVersion: 'v4',
-	region: process.env.AWS_BUCKET_REGION
-});
-
+	region: process.env.AWS_BUCKET_REGION,
+})
 
 const generateToken = (tokenData, secretKey, expiresIn) => {
 	return jwt.sign(tokenData, secretKey, { expiresIn })
@@ -65,23 +64,22 @@ const getDownloadableUrl = async (imgPath) => {
 		// }
 		// imgPath = await AwsFileHelper.getDownloadableUrl(options.destFilePath, options.bucketName, options.bucketRegion)
 
+		/* Signed url options */
+		let options = {
+			Bucket: process.env.DEFAULT_AWS_BUCKET_NAME,
+			Key: imgPath,
+			Expires: 6000,
+		}
+		options = JSON.parse(JSON.stringify(options))
 
-                    /* Signed url options */
-                    let options = {
-                        Bucket: process.env.DEFAULT_AWS_BUCKET_NAME,
-                        Key: imgPath,
-                        Expires: 6000
-                    };
-                    options = JSON.parse(JSON.stringify(options));
-
-                    try {
-                        /* connected to bucket and instantiated file object to get signed url */
-                        const signedUrl = await s3.getSignedUrlPromise("getObject", options);
-                        // return { signedUrl, filePath: destFilePath };
-                     imgPath = signedUrl;
-                    } catch (error) {
-                        throw error;
-                    }
+		try {
+			/* connected to bucket and instantiated file object to get signed url */
+			const signedUrl = await s3.getSignedUrlPromise('getObject', options)
+			// return { signedUrl, filePath: destFilePath };
+			imgPath = signedUrl
+		} catch (error) {
+			throw error
+		}
 	} else if (process.env.CLOUD_STORAGE === 'AZURE') {
 		const options = {
 			destFilePath: imgPath,
@@ -96,6 +94,11 @@ const getDownloadableUrl = async (imgPath) => {
 	return imgPath
 }
 
+const calculateInterest = (prinicple, rateOfIntrest, days) => {
+	let interest = Math.ceil((prinicple * rateOfIntrest * (days / 365)) / 100)
+	return interest
+}
+
 module.exports = {
 	generateToken,
 	hashPassword,
@@ -103,4 +106,5 @@ module.exports = {
 	clearFile,
 	composeEmailBody,
 	getDownloadableUrl,
+	calculateInterest,
 }

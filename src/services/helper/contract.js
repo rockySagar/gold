@@ -11,14 +11,22 @@ const apiResponses = require('@constants/api-responses')
 const common = require('@constants/common')
 const contractData = require('@db/contract/queries')
 const ObjectId = require('mongoose').Types.ObjectId
+const usersData = require('@db/users/queries')
+const utilsHelper = require('@generics/utils')
 
 const pdf = require('@generics/pdf')
 let ejs = require('ejs')
+const { util } = require('@google-cloud/storage/build/src/nodejs-common')
+
+const moment = require('moment')
+const { body } = require('express-validator/check')
 
 module.exports = class contractHelper {
 	static async create(bodyData, loggedInUserId) {
 		try {
 			bodyData['userId'] = ObjectId(loggedInUserId)
+			bodyData['balance'] = bodyData.loanAmount
+
 			let sales = await contractData.create(bodyData)
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
@@ -59,18 +67,70 @@ module.exports = class contractHelper {
 			}
 			bodyData['paidAt'] = new Date().toISOString()
 
-			const result = await contractData.updateOne(filter, { $push: { installments: bodyData } })
-			if (result === 'CONTRACT_NOT_FOUND') {
+			const contractDetails = await contractData.findOne(filter)
+
+			const loanDate = moment(contractDetails.disbursementAt).format('YYYY-MM-DD')
+
+			const currentDate = moment(new Date()).format('YYYY-MM-DD')
+
+			var mm = moment(currentDate)
+			if (contractDetails && contractDetails.balance) {
+				let balance = parseFloat(contractDetails.balance)
+				let intBal = parseFloat(contractDetails.interestBalance)
+
+				let lastPaid = loanDate
+
+				if (contractDetails.lastPaid) {
+					lastPaid = moment(contractDetails.lastPaid).format('YYYY-MM-DD')
+				}
+				bodyData['days'] = mm.diff(lastPaid, 'days')
+				contractDetails.intrestRate = contractDetails.intrestRate * 12
+				let intrestTill = utilsHelper.calculateInterest(
+					contractDetails.loanAmount,
+					contractDetails.intrestRate,
+					bodyData['days']
+				)
+
+				intrestTill = intrestTill + intBal
+				if (bodyData.amount > intrestTill) {
+					let intrestPaid = intrestTill
+					let principlePaid = parseFloat(bodyData.amount) - intrestTill
+					bodyData['interestDeducted'] = intrestPaid
+					bodyData['prinicpleAmountDeducted'] = principlePaid
+					balance = parseFloat(contractDetails.balance) - principlePaid
+
+					intBal = 0
+				} else {
+					let intBalence = parseFloat(intrestTill) - parseFloat(bodyData.amount)
+					intBal = intBalence
+					bodyData['interestDeducted'] = bodyData.amount
+					bodyData['prinicpleAmountDeducted'] = 0
+				}
+
+				const result = await contractData.updateOne(filter, {
+					lastPaid: bodyData['paidAt'],
+					balance: balance,
+					interestBalance: intBal,
+					$push: { installments: bodyData },
+				})
+				if (result === 'CONTRACT_NOT_FOUND') {
+					return common.failureResponse({
+						message: 'Contract failed to update',
+						statusCode: httpStatusCode.bad_request,
+						responseCode: 'CLIENT_ERROR',
+					})
+				}
+				return common.successResponse({
+					statusCode: httpStatusCode.accepted,
+					message: 'Installment added successfully',
+				})
+			} else {
 				return common.failureResponse({
 					message: 'Contract failed to update',
 					statusCode: httpStatusCode.bad_request,
 					responseCode: 'CLIENT_ERROR',
 				})
 			}
-			return common.successResponse({
-				statusCode: httpStatusCode.accepted,
-				message: 'Installment added successfully',
-			})
 		} catch (error) {
 			throw error
 		}
@@ -116,10 +176,24 @@ module.exports = class contractHelper {
 	static async generatePdf(id) {
 		try {
 			let contractDetails = await contractData.findOne({ _id: id })
-			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
+
+			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
+
+			if (customerDetails.image) {
+				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
+			}
+
+			contractDetails['customerDetails'] = customerDetails
+			let object = {
+				...customerDetails,
+				...contractDetails,
+				siteUrl: 'http://localhost:3002',
+			}
+			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: object })
 
 			// console.log(html,"html",__basedir);
 
+			// console.log(contractDetails.customerId,"contractDetails",contractDetails);
 			let pdfcon = await pdf.generatePdf(html.toString())
 
 			return common.successResponse({

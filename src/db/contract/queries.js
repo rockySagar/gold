@@ -22,9 +22,9 @@ module.exports = class SalesData {
 	static updateOne(filter, update, options = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
+				console.log('updateResponse', filter, '---', update)
 				const updateResponse = await Sales.update(filter, update, options)
 
-				console.log('updateResponse', filter, '---', update)
 				if (
 					(updateResponse.n === 1 && updateResponse.nModified === 1) ||
 					(updateResponse.matchedCount === 1 && updateResponse.modifiedCount === 1)
@@ -93,6 +93,10 @@ module.exports = class SalesData {
 							tax: 1,
 							disbursementAt: 1,
 							status: 1,
+							interestBalance: 1,
+							lastPaid: 1,
+							balance: 1,
+							terms: 1,
 
 							//  price: 1,
 							//  description: 1,

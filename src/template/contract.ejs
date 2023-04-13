@@ -11,11 +11,11 @@
 
 
 			.invoice-box {
-				max-width: 800px;
+				/* max-width: 1200px; */
 				margin: auto;
 				padding: 30px;
-				border: 1px solid #eee;
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+				/* border: 1px solid #eee; */
+				/* box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); */
 				font-size: 16px;
 				line-height: 24px;
 				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
@@ -101,19 +101,49 @@
 			.invoice-box.rtl table tr td:nth-child(2) {
 				text-align: left;
 			}
+			.details {
+				font-size: 14px;
+			}
+			.details-head {
+				font-size: 16px;
+				font-weight: bold;
+				color: #000;
+			}
 		</style>
+
 	</head>
 
 	<body>
 
 
-		<div >
-			<img  src="http://localhost:3002/public/assets/logo.png" style="display: block;
+		<div style="padding-bottom: 40px">
+			<img  src="<%= data.siteUrl %>/public/assets/logo.png" style="display: block;
 			margin-left: auto;
 			margin-right: auto;
 			width: 25%;" />
+			<div style="text-align: center;"> Market Road Sagar- 577401 </div>
+			<div style="text-align: center;"> Mobile: 9169162280 </div>
 		</div>
-		<div class="invoice-box">
+
+		<div style="float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
+			<div class="details-head"> Customer Details</div>
+			<div class="details" style="text-transform: capitalize;"> Name :<%= data.customerDetails.name %> </div>
+			<div class="details" style="text-transform: capitalize;" > Address:  <%= data.customerDetails.address %></div>
+			<div>Mobile:  <%= data.customerDetails.mobile.number %></div>
+		</div>
+
+		<div style="float:right;width:20%;">
+			<img src="<%= data.customerDetails.image %>"  style="width:80px;height:80px;border:1px solid #ccc">
+		</div>
+
+		<div style="float:right;width:35%">
+			<div class="details-head"> Innvoice Details</div>
+			<div class="details"> Invoice Id :<%= data.customerDetails.name %> </div>
+			<div class="details" > Date : <%= new Date(data.createdAt).toDateString() %></div>
+			<div class="details"> Due Date : <%= new Date(data.dueDate).toDateString() %></div>
+			
+		</div>
+		<div class="invoice-box" style="min-height: 600px">
 
 
 				<table cellpadding="0" cellspacing="0">
@@ -125,35 +155,14 @@
 									</td>
 								</tr> -->
 					
-		
-					<tr class="information">
-						<td colspan="2">
-							<table>
-								<tr>
-									<td>
-										Sparksuite, Inc.<br />
-										12345 Sunny Road<br />
-										Sunnyville, CA 12345
-									</td>
-	
-									<td>
-										
-											Invoice #: 123<br />
-											Created: January 1, 2015<br />
-											Due: February 1, 2015
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
 
 				
 					<tr class="heading">
 						<td>Sl</td>
-						<td>Item</td>
-						<td>Qty</td>
-						<td>Weight</td>
-						<td>Total</td>
+						<td  style="text-align:right" >Item</td>
+						<td  style="text-align:right" >Qty</td>
+						<td  style="text-align:right" >Weight</td>
+						<td style="text-align:right"> Total</td>
 					</tr>
 						<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
 						<tr class="item">
@@ -165,14 +174,18 @@
 						</tr>
 						<% } } %>
 					
-	
-					
-					
-	
-					
-	
-					
 			</table>
+	
 		</div>
+
+		<div style="float: left;width:50%;text-align: left"> Customer Signature</div>
+			
+		<div style="float: right;width:50%;text-align: right;"> Manager Signature</div>
+		<br> </br>
+		<br> </br>
+		<br> </br>
+		<h4 style="text-align: center">
+			Thanks for Bussiness
+		</h4>
 	</body>
 </html>

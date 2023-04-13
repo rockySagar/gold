@@ -1,6 +1,6 @@
 /**
  * name : models/users/query
- * author : Rakesh  
+ * author : Rakesh
  * Date : 07-Oct-2021
  * Description : Users database operations
  */
@@ -13,7 +13,29 @@ module.exports = class UsersData {
 	static findOne(filter, projection = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const userData = await Users.findOne(filter, projection)
+				const userData = await Users.findOne(filter, projection).lean()
+				resolve(userData)
+			} catch (error) {
+				reject(error)
+			}
+		})
+	}
+
+	static find(filter) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const userData = await Users.findOne(filter)
+				resolve(userData)
+			} catch (error) {
+				reject(error)
+			}
+		})
+	}
+
+	static count(filter, projection = {}) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const userData = await Users.count(filter)
 				resolve(userData)
 			} catch (error) {
 				reject(error)
@@ -24,7 +46,6 @@ module.exports = class UsersData {
 	static findAllUsers(filter, projection = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
-
 				const usersData = await Users.find(filter, projection)
 				resolve(usersData)
 			} catch (error) {
@@ -59,26 +80,25 @@ module.exports = class UsersData {
 		})
 	}
 
-	static searchUsers(page, limit, search, filters) {
+	static searchUsers(page, limit, search, filters, type) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let users = await Users.aggregate([
 					{
-						
 						$match: {
-							$and: [ filters, { deleted: false,isAdmin: false }],
-						    $or: [{ name: new RegExp(search, 'i') } ,  { "mobile.number": new RegExp(search) }],
+							$and: [filters, { deleted: false, isAdmin: false }],
+							$or: [{ name: new RegExp(search, 'i') }, { 'mobile.number': new RegExp(search) }],
 						},
 					},
 					{
 						$project: {
 							mobile: 1,
-							organisationId:1,
-							status:1,
+							organisationId: 1,
+							status: 1,
 							name: 1,
 							image: 1,
 							areasOfExpertise: 1,
-							type:1						
+							type: 1,
 						},
 					},
 					{
@@ -125,6 +145,8 @@ module.exports = class UsersData {
 				{
 					$project: {
 						name: 1,
+						userId: 1,
+						address: 1,
 						image: 1,
 						areasOfExpertise: 1,
 					},

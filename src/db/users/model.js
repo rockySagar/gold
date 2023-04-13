@@ -8,10 +8,16 @@
 // Dependencies
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+// const autoIncrement = require('mongoose-auto-increment');
 
 const userSchema = new Schema({
 	organisationId: {
 		type: mongoose.Types.ObjectId,
+		index: true,
+		required: true,
+	},
+	userId: {
+		type: Number,
 		index: true,
 		required: true,
 	},
@@ -36,6 +42,9 @@ const userSchema = new Schema({
 	name: {
 		type: String,
 		required: false,
+	},
+	address: {
+		type: String,
 	},
 	lastName: {
 		type: String,
@@ -70,12 +79,14 @@ const userSchema = new Schema({
 	rating: {
 		type: Object,
 	},
-	type:{
+	type: {
 		type: String,
 		required: false,
-		default: "customer"
-	}
+		default: 'customer',
+	},
 })
+
+// userSchema.plugin(autoIncrement.plugin, { model: 'Book', field: 'userId' });
 
 const Users = db.model('users', userSchema)
 
