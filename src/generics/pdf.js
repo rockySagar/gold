@@ -5,9 +5,11 @@
 
 var pdf = require('html-pdf')
 
-const generatePdf = (html) => {
+const generatePdf = (html, options) => {
 	return new Promise(async (resolve, reject) => {
-		var options = { format: 'Letter' }
+		// //  options['format'] ='Letter';
+		// //  options['width'] ='200px';
+		// var options =
 		pdf.create(html, options).toBuffer(function (err, buffer) {
 			if (err) return console.log(err)
 			resolve(buffer)

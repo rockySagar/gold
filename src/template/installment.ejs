@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+
+
+
+
+
+table, td, th {
+  border: 1px solid #ccc;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td {
+  text-align: center;
+}
+		</style>
+
+	</head>
+
+	<body>
+
+
+		<div style="padding-bottom: 40px">
+			<img  src="<%= data.siteUrl %>/public/assets/logo.png" style="display: block;
+			margin-left: auto;
+			margin-right: auto;
+			width: 25%;" />
+			<div style="text-align: center;"> Market Road Sagar- 577401 </div>
+			<div style="text-align: center;"> Mobile: 9169162280 </div>
+		</div>
+
+	
+
+        <div style="float:left;width:100%;padding-left:4%;margin-bottom: 50px;">
+			<div class="details-head"> Customer Details</div>
+			<div class="details" style="text-transform: capitalize;"> Name :<%= data.customerDetails.name %> </div>
+			<div class="details" style="text-transform: capitalize;" > Address:  <%= data.customerDetails.address %></div>
+			<div>Mobile:  <%= data.customerDetails.mobile.number %></div>
+		</div>
+
+        <div style="float:right;width:100%">
+			<div class="details-head"> Innvoice Details</div>
+		</div>
+
+       
+            <table>
+                <tr>
+                  <th>Title</th>
+                  <th>Amount</th>
+                </tr>
+                <tr>   
+            <td>  Paid  </td> <td><%= data.interestPaid %> </td> </tr>
+            <tr><td>Principle Paid </td> <td><%= data.principlePaid %> </td></tr>
+            <tr><td>Total Amount Paid </td> <td>  <%= data.totalPaid %> </td></tr>
+     
+    </table>
+      
+
+        <br> </br>
+        <div>
+            <div> Loan Balance after installment :  <%= data.balance %></div>
+            <div> Paid At :  <%= data.paidAt %></div>
+        </div>
+        <br> </br>
+		<br> </br>
+		<br> </br>
+
+		<div style="width:50%;text-align: right;"> Manager Signature</div>
+		<br> </br>
+		<br> </br>
+		<br> </br>
+		<h4 style="text-align: center">
+			Thanks for the Bussiness
+		</h4>
+	</body>
+</html>

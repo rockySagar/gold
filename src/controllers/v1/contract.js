@@ -125,4 +125,12 @@ module.exports = class Contract {
 			return error
 		}
 	}
+	async installmentPdf(req) {
+		try {
+			const ContractDetails = await contractHelper.installmentPdf(req.params.id)
+			return ContractDetails
+		} catch (error) {
+			return error
+		}
+	}
 }

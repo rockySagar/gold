@@ -9,7 +9,7 @@
 const httpStatusCode = require('@generics/http-status')
 const apiResponses = require('@constants/api-responses')
 const common = require('@constants/common')
-const contractData = require('@db/contract/queries')
+const takeOverData = require('@db/takeOver/queries')
 const ObjectId = require('mongoose').Types.ObjectId
 const usersData = require('@db/users/queries')
 const utilsHelper = require('@generics/utils')
@@ -21,13 +21,13 @@ const { util } = require('@google-cloud/storage/build/src/nodejs-common')
 const moment = require('moment')
 const { body } = require('express-validator/check')
 
-module.exports = class contractHelper {
+module.exports = class takeOverHelper {
 	static async create(bodyData, loggedInUserId) {
 		try {
 			bodyData['userId'] = ObjectId(loggedInUserId)
 			bodyData['balance'] = bodyData.loanAmount
 
-			let sales = await contractData.create(bodyData)
+			let sales = await takeOverData.create(bodyData)
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
 				message: apiResponses.sales_CREATED_SUCCESSFULLY,
@@ -43,17 +43,17 @@ module.exports = class contractHelper {
 			const filter = {
 				_id: ObjectId(id),
 			}
-			const result = await contractData.updateOne(filter, bodyData)
-			if (result === 'CONTRACT_NOT_FOUND') {
+			const result = await takeOverData.updateOne(filter, bodyData)
+			if (result === 'TAKEOVER_NOT_FOUND') {
 				return common.failureResponse({
-					message: 'Contract failed to update',
+					message: 'TakeOver failed to update',
 					statusCode: httpStatusCode.bad_request,
 					responseCode: 'CLIENT_ERROR',
 				})
 			}
 			return common.successResponse({
 				statusCode: httpStatusCode.accepted,
-				message: 'Contract update successfully',
+				message: 'TakeOver update successfully',
 			})
 		} catch (error) {
 			throw error
@@ -67,27 +67,27 @@ module.exports = class contractHelper {
 			}
 			bodyData['paidAt'] = new Date().toISOString()
 
-			const contractDetails = await contractData.findOne(filter)
+			const takeOverDetails = await takeOverData.findOne(filter)
 
-			const loanDate = moment(contractDetails.disbursementAt).format('YYYY-MM-DD')
+			const loanDate = moment(takeOverDetails.disbursementAt).format('YYYY-MM-DD')
 
 			const currentDate = moment(new Date()).format('YYYY-MM-DD')
 
 			var mm = moment(currentDate)
-			if (contractDetails && contractDetails.balance) {
-				let balance = parseFloat(contractDetails.balance)
-				let intBal = parseFloat(contractDetails.interestBalance)
+			if (takeOverDetails && takeOverDetails.balance) {
+				let balance = parseFloat(takeOverDetails.balance)
+				let intBal = parseFloat(takeOverDetails.interestBalance)
 
 				let lastPaid = loanDate
 
-				if (contractDetails.lastPaid) {
-					lastPaid = moment(contractDetails.lastPaid).format('YYYY-MM-DD')
+				if (takeOverDetails.lastPaid) {
+					lastPaid = moment(takeOverDetails.lastPaid).format('YYYY-MM-DD')
 				}
 				bodyData['days'] = mm.diff(lastPaid, 'days')
-				contractDetails.intrestRate = contractDetails.intrestRate * 12
+				takeOverDetails.intrestRate = takeOverDetails.intrestRate * 12
 				let intrestTill = utilsHelper.calculateInterest(
-					contractDetails.loanAmount,
-					contractDetails.intrestRate,
+					takeOverDetails.loanAmount,
+					takeOverDetails.intrestRate,
 					bodyData['days']
 				)
 
@@ -97,7 +97,7 @@ module.exports = class contractHelper {
 					let principlePaid = parseFloat(bodyData.amount) - intrestTill
 					bodyData['interestDeducted'] = intrestPaid
 					bodyData['prinicpleAmountDeducted'] = principlePaid
-					balance = parseFloat(contractDetails.balance) - principlePaid
+					balance = parseFloat(takeOverDetails.balance) - principlePaid
 
 					intBal = 0
 				} else {
@@ -107,15 +107,15 @@ module.exports = class contractHelper {
 					bodyData['prinicpleAmountDeducted'] = 0
 				}
 
-				const result = await contractData.updateOne(filter, {
+				const result = await takeOverData.updateOne(filter, {
 					lastPaid: bodyData['paidAt'],
 					balance: balance,
 					interestBalance: intBal,
 					$push: { installments: bodyData },
 				})
-				if (result === 'CONTRACT_NOT_FOUND') {
+				if (result === 'TakeOver_NOT_FOUND') {
 					return common.failureResponse({
-						message: 'Contract failed to update',
+						message: 'TakeOver failed to update',
 						statusCode: httpStatusCode.bad_request,
 						responseCode: 'CLIENT_ERROR',
 					})
@@ -126,7 +126,7 @@ module.exports = class contractHelper {
 				})
 			} else {
 				return common.failureResponse({
-					message: 'Contract failed to update',
+					message: 'TakeOver failed to update',
 					statusCode: httpStatusCode.bad_request,
 					responseCode: 'CLIENT_ERROR',
 				})
@@ -154,7 +154,7 @@ module.exports = class contractHelper {
 			const filter = {
 				_id: ObjectId(id),
 			}
-			const data = await contractData.findOne(filter)
+			const data = await takeOverData.findOne(filter)
 			if (!data) {
 				return common.failureResponse({
 					message: apiResponses.SALES_NOT_FOUND,
@@ -175,25 +175,25 @@ module.exports = class contractHelper {
 
 	static async generatePdf(id) {
 		try {
-			let contractDetails = await contractData.findOne({ _id: id })
+			let takeOverDetails = await takeOverData.findOne({ _id: id })
 
-			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
+			let customerDetails = await usersData.find({ _id: takeOverDetails.customerId })
 
 			if (customerDetails.image) {
 				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
 			}
 
-			contractDetails['customerDetails'] = customerDetails
+			takeOverDetails['customerDetails'] = customerDetails
 			let object = {
 				...customerDetails,
-				...contractDetails,
+				...takeOverDetails,
 				siteUrl: 'http://localhost:3002',
 			}
-			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: object })
+			let html = await ejs.renderFile(__basedir + '/template/takeOver.ejs', { data: object })
 
 			// console.log(html,"html",__basedir);
 
-			// console.log(contractDetails.customerId,"contractDetails",contractDetails);
+			// console.log(takeOverDetails.customerId,"takeOverDetails",takeOverDetails);
 			let pdfcon = await pdf.generatePdf(html.toString(), {})
 
 			return common.successResponse({
@@ -208,32 +208,26 @@ module.exports = class contractHelper {
 
 	static async installmentPdf(id) {
 		try {
-			let contractDetails = await contractData.findOne({ _id: id })
+			let takeOverDetails = await takeOverData.findOne({ _id: id })
 
-			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
+			let customerDetails = await usersData.find({ _id: takeOverDetails.customerId })
 
 			if (customerDetails.image) {
 				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
 			}
 
-			contractDetails['customerDetails'] = customerDetails
+			takeOverDetails['customerDetails'] = customerDetails
 			let object = {
 				...customerDetails,
-				interestPaid: '4444',
-				principlePaid: '4444',
-				totalPaid: '3000',
-				balance: '3000',
-				paidAt: '2020-03-01',
-				...contractDetails,
-
+				...takeOverDetails,
 				siteUrl: 'http://localhost:3002',
 			}
 			let html = await ejs.renderFile(__basedir + '/template/installment.ejs', { data: object })
 
 			// console.log(html,"html",__basedir);
 
-			// console.log(contractDetails.customerId,"contractDetails",contractDetails);
-			let pdfcon = await pdf.generatePdf(html.toString(), { width: 300, height: 300 })
+			// console.log(takeOverDetails.customerId,"takeOverDetails",takeOverDetails);
+			let pdfcon = await pdf.generatePdf(html.toString(), { config: { width: '3in' } })
 
 			return common.successResponse({
 				statusCode: 200,
@@ -296,7 +290,7 @@ module.exports = class contractHelper {
 			// }
 
 			console.log('filters', filters)
-			const salesDetails = await contractData.findAll(page, limit, search, filters)
+			const salesDetails = await takeOverData.findAll(page, limit, search, filters)
 			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
 				return common.failureResponse({
 					message: apiResponses.SALES_NOT_FOUND,
