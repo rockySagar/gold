@@ -179,17 +179,22 @@ module.exports = class contractHelper {
 
 			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
 
-			if (customerDetails.image) {
+			if (customerDetails && customerDetails.image) {
 				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
+			} else {
+				// customerDetails = {};
+				customerDetails['image'] = 'no'
+				// customerDetails['image'] = ">";
 			}
 
 			contractDetails['customerDetails'] = customerDetails
+			contractDetails['siteUrl'] = process.env.HOST_URL
 			let object = {
 				...customerDetails,
 				...contractDetails,
 				siteUrl: 'http://localhost:3002',
 			}
-			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: object })
+			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
 			// console.log(html,"html",__basedir);
 

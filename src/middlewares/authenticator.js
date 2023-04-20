@@ -1,6 +1,6 @@
 /**
  * name : middlewares/authenticator
- * author : Rakesh Kumar   
+ * author : Rakesh Kumar
  * Date : 21-Oct-2021
  * Description : Validating authorized requests
  */
@@ -15,6 +15,9 @@ const UsersData = require('@db/users/queries')
 module.exports = async function (req, res, next) {
 	try {
 		let internalAccess = false
+
+		const authHeader = req.get('X-auth-token')
+
 		await Promise.all(
 			common.uploadUrls.map(async function (path) {
 				if (req.path.includes(path)) {
@@ -28,10 +31,20 @@ module.exports = async function (req, res, next) {
 			})
 		)
 
-		if (internalAccess == true) {
+		let guestUrl = false
+		common.guestUrls.map(function (path) {
+			if (req.path.includes(path)) {
+				guestUrl = true
+			}
+		})
+
+		if ((internalAccess || guestUrl) && !authHeader) {
 			next()
 			return
-		} else if (!common.guestUrls.includes(req.url)) {
+		} else if (internalAccess == true) {
+			next()
+			return
+		} else if (!guestUrl && !common.guestUrls.includes(req.url)) {
 			const authHeader = req.get('X-auth-token')
 			if (!authHeader) {
 				throw common.failureResponse({

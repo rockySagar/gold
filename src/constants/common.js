@@ -1,13 +1,11 @@
 /**
  * name : constants/common.js
- * author : Rakesh Kumar   
+ * author : Rakesh Kumar
  * Date : 29-Sep-2021
  * Description : All commonly used constants through out the service
  */
 
 const successResponse = ({ statusCode = 500, responseCode = 'OK', message, result = [] }) => {
-
-	
 	return {
 		statusCode,
 		responseCode,
@@ -39,6 +37,10 @@ module.exports = {
 		'/gold/v1/account/resetPassword',
 		'/gold/v1/systemUsers/create',
 		'/gold/v1/organisation/create',
+		'contract/generatePdf',
+		'contract/installmentPdf',
+		'takeOver/generatePdf',
+		'takeOver/installmentPdf',
 	],
 	uploadUrls: ['bulkCreateMentors', '/gold/v1/account/verifyMentor', 'profile/details', '/gold/v1/account/list'],
 	notificationEmailType: 'email',
