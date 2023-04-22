@@ -175,7 +175,7 @@ module.exports = class takeOverHelper {
 
 	static async generatePdf(id) {
 		try {
-			let takeOverDetails = await takeOverData.findOne({ _id: id })
+			let takeOverDetails = await takeOverData.findOne({ _id: ObjectId(id) })
 
 			let customerDetails = await usersData.find({ _id: takeOverDetails.customerId })
 
@@ -184,6 +184,7 @@ module.exports = class takeOverHelper {
 			}
 
 			takeOverDetails['customerDetails'] = customerDetails
+
 			let object = {
 				...customerDetails,
 				...takeOverDetails,
