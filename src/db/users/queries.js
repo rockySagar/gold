@@ -87,7 +87,11 @@ module.exports = class UsersData {
 					{
 						$match: {
 							$and: [filters, { deleted: false, isAdmin: false }],
-							$or: [{ name: new RegExp(search, 'i') }, { 'mobile.number': new RegExp(search) }],
+							$or: [
+								{ userId: new RegExp(search, 'i') },
+								{ name: new RegExp(search, 'i') },
+								{ 'mobile.number': new RegExp(search) },
+							],
 						},
 					},
 					{
