@@ -103,6 +103,8 @@ module.exports = class UsersData {
 							image: 1,
 							areasOfExpertise: 1,
 							type: 1,
+							userId: 1,
+							address: 1,
 						},
 					},
 					{
