@@ -17,7 +17,7 @@ let contractSchema = new Schema({
 			paidAt: { type: String, required: true },
 		},
 	],
-	balance: { type: Number },
+	balance: { type: String, default: 0 },
 	terms: { type: Number },
 	customerId: { type: mongoose.Types.ObjectId, required: true },
 	userId: {

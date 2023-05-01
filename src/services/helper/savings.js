@@ -11,6 +11,7 @@ const apiResponses = require('@constants/api-responses')
 const common = require('@constants/common')
 const savingsData = require('@db/savings/queries')
 const ObjectId = require('mongoose').Types.ObjectId
+const usersData = require('@db/users/queries')
 
 const pdf = require('@generics/pdf')
 let ejs = require('ejs')
@@ -59,7 +60,20 @@ module.exports = class savingsHelper {
 			}
 			bodyData['paidAt'] = new Date().toISOString()
 
-			const result = await savingsData.updateOne(filter, { $push: { installments: bodyData } })
+			const data = await savingsData.findOne(filter)
+			console.log('data.balance', data.balance)
+			if (!data.balance) {
+				data.balance = 0
+			}
+			let balance = 0
+			if (data.balance) {
+				balance = parseFloat(data.balance) + parseFloat(bodyData.amount)
+			} else {
+				balance = parseFloat(bodyData.amount)
+			}
+			console.log('balance', balance)
+
+			const result = await savingsData.updateOne(filter, { balance: balance, $push: { installments: bodyData } })
 			if (result === 'SAVINGS_NOT_FOUND') {
 				return common.failureResponse({
 					message: 'Savings failed to update',
@@ -113,14 +127,38 @@ module.exports = class savingsHelper {
 		}
 	}
 
-	static async generatePdf(id) {
+	static async installmentPdf(id, installmentId) {
 		try {
 			let savingsDetails = await savingsData.findOne({ _id: id })
-			let html = await ejs.renderFile(__basedir + '/template/savings.ejs', { data: savingsDetails })
+
+			let customerDetails = await usersData.find({ _id: savingsDetails.customerId })
+
+			if (customerDetails.image) {
+				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
+			}
+
+			savingsDetails['customerDetails'] = customerDetails
 
 			// console.log(html,"html",__basedir);
 
-			let pdfcon = await pdf.generatePdf(html.toString())
+			let installmentDetails = {}
+			savingsDetails.installments.map(function (adoc) {
+				if (adoc._id == installmentId) {
+					installmentDetails = adoc
+				}
+			})
+
+			let object = {
+				...savingsDetails,
+				amount: installmentDetails.amount,
+				balance: savingsDetails.balance,
+				paidAt: installmentDetails.paidAt,
+				siteUrl: process.env.HOST_URL,
+				customerDetails: customerDetails,
+			}
+			let html = await ejs.renderFile(__basedir + '/template/savingsInstallment.ejs', { data: object })
+
+			let pdfcon = await pdf.generatePdf(html.toString(), { width: 200, height: 400 })
 
 			return common.successResponse({
 				statusCode: 200,

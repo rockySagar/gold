@@ -54,9 +54,7 @@ td {
                   <th>Amount</th>
                 </tr>
                 <tr>   
-            <td style="text-align: left">  Interest Paid  </td> <td><%= data.interestPaid %> </td> </tr>
-            <tr><td style="text-align: left">Principle Paid </td> <td><%= data.principlePaid %> </td></tr>
-            <tr><td style="text-align: left">Total Amount Paid </td> <td>  <%= data.totalPaid %> </td></tr>
+            <tr><td style="text-align: left">Total Amount Paid </td> <td>  <%= data.amount %> </td></tr>
 			
      
     </table>
@@ -64,8 +62,8 @@ td {
 
         <br> </br>
         <div>
-            <div> Loan Balance after installment :  <%= data.balance %></div>
-            <div> Paid At :  <%= new Date(data.paidAt).toDateString() %></div>
+            <div>  Balance after installment :  <%= data.balance %></div>
+            <div> Paid At : <%= new Date(data.paidAt).toDateString() %></div>
         </div>
         <br> </br>
 		<br> </br>

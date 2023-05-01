@@ -30,6 +30,7 @@
 		"express-fileupload": "^1.2.1",
 		"express-validator": "^5.3.1",
 		"files-cloud-storage": "^1.2.2",
+		"html-pdf": "^3.0.1",
 		"html-pdf-node": "^1.0.8",
 		"json2csv": "^5.0.6",
 		"jsonwebtoken": "^8.5.1",

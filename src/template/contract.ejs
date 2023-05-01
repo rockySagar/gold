@@ -113,7 +113,7 @@
 
 	</head>
 
-	<body>
+	<body style="font-weight: 7px">
 
 
 		<div style="padding-bottom: 40px">
@@ -166,7 +166,7 @@
 					</tr>
 						<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
 						<tr class="item">
-							<td><%= i %> </td>
+							<td><%= i+1 %> </td>
 								<td><%= data.items[i].name %> </td>
 								<td style="text-align:right"><%= data.items[i].qty %> </td>
 								<td style="text-align:right"><%= data.items[i].weight %> </td>
@@ -175,8 +175,10 @@
 						<% } } %>
 					
 			</table>
+			<div style="padding-top: 20px"> Total Loan Amount : <%= data. loanAmount %> </div>
 	
 		</div>
+		
 
 		<div style="float: left;width:50%;text-align: left"> Customer Signature</div>
 			

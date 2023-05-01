@@ -109,9 +109,9 @@ module.exports = class Savings {
 			return error
 		}
 	}
-	async generatePdf(req) {
+	async installmentPdf(req) {
 		try {
-			const SavingsDetails = await savingsHelper.generatePdf(req.params.id)
+			const SavingsDetails = await savingsHelper.installmentPdf(req.params.id, req.query.installmentId)
 			return SavingsDetails
 		} catch (error) {
 			return error

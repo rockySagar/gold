@@ -78,6 +78,14 @@ module.exports = class contractHelper {
 				let balance = parseFloat(contractDetails.balance)
 				let intBal = parseFloat(contractDetails.interestBalance)
 
+				if (bodyData.amount > balance + intBal) {
+					return common.failureResponse({
+						message: 'Installment amount is greater than balance amount',
+						statusCode: httpStatusCode.bad_request,
+						responseCode: 'CLIENT_ERROR',
+					})
+				}
+
 				let lastPaid = loanDate
 
 				if (contractDetails.lastPaid) {
@@ -189,16 +197,9 @@ module.exports = class contractHelper {
 
 			contractDetails['customerDetails'] = customerDetails
 			contractDetails['siteUrl'] = process.env.HOST_URL
-			let object = {
-				...customerDetails,
-				...contractDetails,
-				siteUrl: 'http://localhost:3002',
-			}
+
 			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
-			// console.log(html,"html",__basedir);
-
-			// console.log(contractDetails.customerId,"contractDetails",contractDetails);
 			let pdfcon = await pdf.generatePdf(html.toString(), {})
 
 			return common.successResponse({
@@ -211,7 +212,7 @@ module.exports = class contractHelper {
 		}
 	}
 
-	static async installmentPdf(id) {
+	static async installmentPdf(id, installmentId) {
 		try {
 			let contractDetails = await contractData.findOne({ _id: id })
 
@@ -221,24 +222,31 @@ module.exports = class contractHelper {
 				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
 			}
 
+			let installmentDetails = {}
+			contractDetails.installments.map(function (adoc) {
+				if (adoc._id == installmentId) {
+					installmentDetails = adoc
+				}
+			})
+
 			contractDetails['customerDetails'] = customerDetails
 			let object = {
 				...customerDetails,
-				interestPaid: '4444',
-				principlePaid: '4444',
-				totalPaid: '3000',
-				balance: '3000',
-				paidAt: '2020-03-01',
+				interestPaid: installmentDetails.interestDeducted,
+				principlePaid: installmentDetails.prinicpleAmountDeducted,
+				totalPaid: installmentDetails.amount,
+				balance: contractDetails.balance,
+				paidAt: installmentDetails.paidAt,
 				...contractDetails,
 
-				siteUrl: 'http://localhost:3002',
+				siteUrl: process.env.HOST_URL,
 			}
 			let html = await ejs.renderFile(__basedir + '/template/installment.ejs', { data: object })
 
 			// console.log(html,"html",__basedir);
 
 			// console.log(contractDetails.customerId,"contractDetails",contractDetails);
-			let pdfcon = await pdf.generatePdf(html.toString(), { width: 300, height: 300 })
+			let pdfcon = await pdf.generatePdf(html.toString(), { width: 200, height: 400 })
 
 			return common.successResponse({
 				statusCode: 200,
@@ -300,7 +308,7 @@ module.exports = class contractHelper {
 			// 	}
 			// }
 
-			console.log('filters', filters)
+			console.log(limit, 'filters', page)
 			const salesDetails = await contractData.findAll(page, limit, search, filters)
 			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
 				return common.failureResponse({

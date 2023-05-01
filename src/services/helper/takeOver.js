@@ -188,7 +188,7 @@ module.exports = class takeOverHelper {
 			let object = {
 				...customerDetails,
 				...takeOverDetails,
-				siteUrl: 'http://localhost:3002',
+				siteUrl: process.env.HOST_URL,
 			}
 			let html = await ejs.renderFile(__basedir + '/template/takeOver.ejs', { data: object })
 
