@@ -97,6 +97,7 @@ module.exports = class SalesData {
 							lastPaid: 1,
 							balance: 1,
 							terms: 1,
+							dueDate: 1,
 
 							//  price: 1,
 							//  description: 1,

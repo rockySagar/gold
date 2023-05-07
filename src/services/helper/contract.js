@@ -328,4 +328,32 @@ module.exports = class contractHelper {
 			throw error
 		}
 	}
+
+	static async expiredList(page, limit, search) {
+		try {
+			const currentDate = moment(new Date()).format('YYYY-MM-DD')
+
+			let filters = {
+				dueDate: { $lt: currentDate },
+			}
+
+			const salesDetails = await contractData.findAll(page, limit, search, filters)
+			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
+				return common.failureResponse({
+					message: apiResponses.SALES_NOT_FOUND,
+					statusCode: httpStatusCode.bad_request,
+					responseCode: 'CLIENT_ERROR',
+					result: [],
+				})
+			}
+
+			return common.successResponse({
+				statusCode: httpStatusCode.ok,
+				message: apiResponses.SALES_FETCHED_SUCCESSFULLY,
+				result: salesDetails[0] ? salesDetails[0] : [],
+			})
+		} catch (error) {
+			throw error
+		}
+	}
 }

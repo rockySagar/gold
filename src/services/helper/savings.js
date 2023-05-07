@@ -240,4 +240,34 @@ module.exports = class savingsHelper {
 			throw error
 		}
 	}
+
+	static async expiredList(page, limit, search) {
+		try {
+			let arrayOfStatus = []
+			if (status && status != '') {
+				arrayOfStatus = status.split(',')
+			}
+
+			let filters = {}
+
+			console.log('filters', filters)
+			const salesDetails = await savingsData.findAll(page, limit, search, filters)
+			if (salesDetails[0] && salesDetails[0].data.length == 0 && search !== '') {
+				return common.failureResponse({
+					message: apiResponses.SALES_NOT_FOUND,
+					statusCode: httpStatusCode.bad_request,
+					responseCode: 'CLIENT_ERROR',
+					result: [],
+				})
+			}
+
+			return common.successResponse({
+				statusCode: httpStatusCode.ok,
+				message: apiResponses.SALES_FETCHED_SUCCESSFULLY,
+				result: salesDetails[0] ? salesDetails[0] : [],
+			})
+		} catch (error) {
+			throw error
+		}
+	}
 }
