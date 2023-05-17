@@ -133,4 +133,13 @@ module.exports = class Contract {
 			return error
 		}
 	}
+
+	async expiredList(req) {
+		try {
+			const ContractDetails = await contractHelper.expiredList(req.pageNo, req.pageSize, req.searchText)
+			return ContractDetails
+		} catch (error) {
+			return error
+		}
+	}
 }

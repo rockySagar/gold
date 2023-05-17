@@ -56,7 +56,7 @@ const userSchema = new Schema({
 	image: String,
 	experience: String,
 	lastLoggedInAt: Date,
-	aadharNumnber: String,
+	aadharNumber: String,
 	isAdmin: {
 		type: Boolean,
 		default: false,

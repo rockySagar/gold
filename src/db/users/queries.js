@@ -105,7 +105,7 @@ module.exports = class UsersData {
 							type: 1,
 							userId: 1,
 							address: 1,
-							aadharNumnber: 1,
+							aadharNumber: 1,
 						},
 					},
 					{
@@ -156,7 +156,7 @@ module.exports = class UsersData {
 						address: 1,
 						image: 1,
 						areasOfExpertise: 1,
-						aadharNumnber: 1,
+						aadharNumber: 1,
 					},
 				},
 				{
