@@ -20,7 +20,7 @@ let contractSchema = new Schema({
 			image: { type: String, required: false },
 			purity: { type: String, required: true },
 			netWeight: { type: String, required: true },
-			caret: { type: String, required: true },
+			carat: { type: String, required: true },
 		},
 	],
 	installments: [
