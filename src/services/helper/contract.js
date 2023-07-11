@@ -187,6 +187,7 @@ module.exports = class contractHelper {
 
 			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
 
+			console.log('customerDetails.image', customerDetails)
 			if (customerDetails && customerDetails.image) {
 				customerDetails.image = await utilsHelper.getDownloadableUrl(customerDetails.image)
 			} else {

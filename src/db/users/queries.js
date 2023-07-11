@@ -106,6 +106,8 @@ module.exports = class UsersData {
 							userId: 1,
 							address: 1,
 							aadharNumber: 1,
+							relationship: 1,
+							nominee: 1,
 						},
 					},
 					{

@@ -57,6 +57,8 @@ const userSchema = new Schema({
 	experience: String,
 	lastLoggedInAt: Date,
 	aadharNumber: String,
+	relationship: String,
+	nominee: String,
 	isAdmin: {
 		type: Boolean,
 		default: false,

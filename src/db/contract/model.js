@@ -16,8 +16,11 @@ let contractSchema = new Schema({
 			name: { type: String, required: true },
 			description: { type: String },
 			qty: { type: Number, required: true },
-			weight: { type: Number, required: true },
-			image: { type: String, required: true },
+			grossWeight: { type: Number, required: true },
+			image: { type: String, required: false },
+			purity: { type: String, required: true },
+			netWeight: { type: String, required: true },
+			caret: { type: String, required: true },
 		},
 	],
 	installments: [

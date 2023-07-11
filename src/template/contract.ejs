@@ -125,23 +125,23 @@
 			<div style="text-align: center;"> Mobile: 9169162280 </div>
 		</div>
 
-		<div style="float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
+		<div style="font-size:13px;float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
 			<div class="details-head"> Customer Details</div>
 			<div class="details" style="text-transform: capitalize;"> Name :<%= data.customerDetails.name %> </div>
 			<div class="details" style="text-transform: capitalize;" > Address:  <%= data.customerDetails.address %></div>
 			<div>Mobile:  <%= data.customerDetails.mobile.number %></div>
+			<div>Aadhar Number:  <%= data.customerDetails.aadharNumber %></div>
 		</div>
 
 		<div style="float:right;width:20%;">
 			<img src="<%= data.customerDetails.image %>"  style="width:80px;height:80px;border:1px solid #ccc">
 		</div>
 
-		<div style="float:right;width:35%">
+		<div style="font-size:13px;float:right;width:35%">
 			<div class="details-head"> Innvoice Details</div>
 			<div class="details"> Invoice Id :<%= data.customerDetails.name %> </div>
 			<div class="details" > Date : <%= new Date(data.createdAt).toDateString() %></div>
 			<div class="details"> Due Date : <%= new Date(data.dueDate).toDateString() %></div>
-			
 		</div>
 		<div class="invoice-box" style="min-height: 300px">
 
