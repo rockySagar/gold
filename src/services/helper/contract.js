@@ -199,15 +199,15 @@ module.exports = class contractHelper {
 			contractDetails['customerDetails'] = customerDetails
 			contractDetails['siteUrl'] = process.env.HOST_URL
 
-			if (contractDetails && contractDetails.items && contractDetails.items.length > 0) {
-				for (var j = 0; j < contractDetails.items.length; j++) {
-					if (contractDetails.items[j].image) {
-						contractDetails.items[j].image = await utilsHelper.getDownloadableUrl(
-							contractDetails.items[j].image
-						)
-					}
-				}
-			}
+			// if (contractDetails && contractDetails.items && contractDetails.items.length > 0) {
+			// 	for (var j = 0; j < contractDetails.items.length; j++) {
+			// 		if (contractDetails.items[j].image) {
+			// 			contractDetails.items[j].image = await utilsHelper.getDownloadableUrl(
+			// 				contractDetails.items[j].image
+			// 			)
+			// 		}
+			// 	}
+			// }
 
 			console.log('contractDetails------', contractDetails)
 
