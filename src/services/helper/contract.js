@@ -201,7 +201,19 @@ module.exports = class contractHelper {
 
 			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
-			let pdfcon = await pdf.generatePdf(html.toString(), {})
+			let op = {
+				footer: {
+					height: '28mm',
+					contents: {
+						//   first: 'Cover page',
+						//   2: 'Second page', // Any page number is working. 1-based index
+						default:
+							'<div style="float: left;width: 98%;padding-left:1%;padding-right:1%;padding-bottom: 20px;"><div style="float: left;width:50%;text-align: left;font-size: 13px;"> Customer Signature</div><div style="float: right;width:50%;text-align: right;font-size: 13px;"> Manager Signature</div></div>', // fallback value
+						//   last: 'Last Page'
+					},
+				},
+			}
+			let pdfcon = await pdf.generatePdf(html.toString(), op)
 
 			return common.successResponse({
 				statusCode: 200,

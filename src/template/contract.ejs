@@ -55,6 +55,7 @@
 				background: #eee;
 				border-bottom: 1px solid #ddd;
 				font-weight: bold;
+				font-size: 14px;
 			}
 
 			.invoice-box table tr.details td {
@@ -102,10 +103,10 @@
 				text-align: left;
 			}
 			.details {
-				font-size: 14px;
+				font-size: 13px;
 			}
 			.details-head {
-				font-size: 16px;
+				font-size: 14px;
 				font-weight: bold;
 				color: #000;
 			}
@@ -143,9 +144,9 @@
 			<div class="details" > Date : <%= new Date(data.createdAt).toDateString() %></div>
 			<div class="details"> Due Date : <%= new Date(data.dueDate).toDateString() %></div>
 		</div>
+		<% var netWeight = 0, grossWeight = 0; %>
+
 		<div class="invoice-box" style="min-height: 300px">
-
-
 				<table cellpadding="0" cellspacing="0">
 				
 							
@@ -161,31 +162,58 @@
 						<td>Sl</td>
 						<td  style="text-align:right" >Item</td>
 						<td  style="text-align:right" >Qty</td>
-						<td  style="text-align:right" >Weight</td>
-						<td style="text-align:right"> Total</td>
+						<td  style="text-align:right" >Carat</td>
+						<td  style="text-align:right" >Purity</td>
+						<td  style="text-align:right" >Gross Weight</td>
+						<td  style="text-align:right" >Net Weight</td>
 					</tr>
 						<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
 						<tr class="item">
 							<td><%= i+1 %> </td>
 								<td><%= data.items[i].name %> </td>
 								<td style="text-align:right"><%= data.items[i].qty %> </td>
-								<td style="text-align:right"><%= data.items[i].weight %> </td>
-								<td style="text-align:right"><%=  (data.items[i].qty  * data.items[i].weight) %> </td>
+								<td style="text-align:right"><%= data.items[i].carat %> </td>
+								<td style="text-align:right"><%= data.items[i].purity %> </td>
+								<td style="text-align:right"><%= parseFloat(data.items[i].grossWeight).toFixed(3) %> </td>
+								<td style="text-align:right"><%= parseFloat(data.items[i].netWeight).toFixed(3) %> </td>
+								<% 
+									 netWeight = netWeight +  data.items[i].netWeight;
+									 grossWeight =  grossWeight + data.items[i].grossWeight;
+								%>
 						</tr>
 						<% } } %>
+						<tr>
+							<td>Total </td>
+							<td></td>
+							<td style="text-align:right"> </td>
+							<td style="text-align:right"> </td>
+							<td style="text-align:right"> </td>
+							<td style="text-align:right"> <%= parseFloat(grossWeight).toFixed(3) %>  </td>
+							<td style="text-align:right"><%= parseFloat(netWeight).toFixed(3) %> </td>
+						</tr>
 					
 			</table>
-			<div style="padding-top: 20px"> Total Loan Amount : <%= data. loanAmount %> </div>
+			<div style="padding-top: 20px;font-size: 13px;"> Total Loan Amount : <%= data. loanAmount %> </div>
+			<div style="padding-top: 5px;font-size: 13px;"> Intrest Rate : <%= data.intrestRate %> </div>
+			<div style="padding-top:20px">
+			<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
+			<img   src="<%= data.siteUrl %>/public/assets/logo.png" style="
+				width: 100px;float: left;" />
+			 </div>
+
+			<% } } %>
+		</div>
 	
 		</div>
 		
-
-		<div style="float: left;width:50%;text-align: left"> Customer Signature</div>
+<!-- <div style="float: left;width: 98%;padding-top: 20px;padding-left:1%;padding-right:1%;padding-bottom: 20px;">
+		<div style="float: left;width:50%;text-align: left;font-size: 13px;"> Customer Signature</div>
 			
-		<div style="float: right;width:50%;text-align: right;"> Manager Signature</div>
+		<div style="float: right;width:50%;text-align: right;font-size: 13px;"> Manager Signature</div>
+	</div> -->
 		<br> </br>
-		<h4 style="text-align: center">
+		<!-- <h4 style="text-align: center">
 			Thanks for Bussiness
-		</h4>
+		</h4> -->
 	</body>
 </html>
