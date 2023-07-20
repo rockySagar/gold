@@ -209,6 +209,8 @@ module.exports = class contractHelper {
 				}
 			}
 
+			console.log('contractDetails------', contractDetails)
+
 			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
 			let op = {
