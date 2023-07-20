@@ -199,6 +199,16 @@ module.exports = class contractHelper {
 			contractDetails['customerDetails'] = customerDetails
 			contractDetails['siteUrl'] = process.env.HOST_URL
 
+			if (contractDetails && contractDetails.items && contractDetails.items.length > 0) {
+				for (var j = 0; j < contractDetails.items.length; j++) {
+					if (contractDetails.items[j].image) {
+						contractDetails.items[j].image = await utilsHelper.getDownloadableUrl(
+							contractDetails.items[j].image
+						)
+					}
+				}
+			}
+
 			let html = await ejs.renderFile(__basedir + '/template/contract.ejs', { data: contractDetails })
 
 			let op = {
