@@ -27,7 +27,11 @@ module.exports = class contractHelper {
 			bodyData['userId'] = ObjectId(loggedInUserId)
 			bodyData['balance'] = bodyData.loanAmount
 
+			let count = await contractData.count({})
+			bodyData['invoiceId'] = count + 1
+
 			let sales = await contractData.create(bodyData)
+
 			return common.successResponse({
 				statusCode: httpStatusCode.created,
 				message: apiResponses.sales_CREATED_SUCCESSFULLY,
@@ -43,6 +47,7 @@ module.exports = class contractHelper {
 			const filter = {
 				_id: ObjectId(id),
 			}
+
 			const result = await contractData.updateOne(filter, bodyData)
 			if (result === 'CONTRACT_NOT_FOUND') {
 				return common.failureResponse({
@@ -184,6 +189,8 @@ module.exports = class contractHelper {
 	static async generatePdf(id) {
 		try {
 			let contractDetails = await contractData.findOne({ _id: id })
+
+			console.log('contractDetails------', contractDetails)
 
 			let customerDetails = await usersData.find({ _id: contractDetails.customerId })
 

@@ -59,6 +59,7 @@ let contractSchema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	invoiceId: { type: Number, default: 0 },
 })
 
 const products = db.model('contract', contractSchema)

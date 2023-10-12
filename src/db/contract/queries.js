@@ -19,11 +19,22 @@ module.exports = class SalesData {
 		})
 	}
 
+	static count(filter, projection = {}) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const countInfo = await Sales.count(filter)
+				resolve(countInfo)
+			} catch (error) {
+				reject(error)
+			}
+		})
+	}
+
 	static updateOne(filter, update, options = {}) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				console.log('updateResponse', filter, '---', update)
-				const updateResponse = await Sales.update(filter, update, options)
+				const updateResponse = await Sales.updateOne(filter, update, options)
 
 				if (
 					(updateResponse.n === 1 && updateResponse.nModified === 1) ||

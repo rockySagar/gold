@@ -118,7 +118,7 @@
 
 
 		<div style="padding-bottom: 40px">
-			<img  src="<%= data.siteUrl %>/public/assets/logo.png" style="display: block;
+			<img  src="http://localhost:3002/public/assets/logo.png" style="display: block;
 			margin-left: auto;
 			margin-right: auto;
 			width: 25%;" />
@@ -126,25 +126,30 @@
 			<div style="text-align: center;"> Mobile: 9169162280 </div>
 		</div>
 
-		<div style="font-size:13px;float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
+		<!-- <div style="font-size:13px;float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
 			<div class="details-head"> Customer Details</div>
 			<div class="details" style="text-transform: capitalize;"> Name :<%= data.customerDetails.name %> </div>
 			<div class="details" style="text-transform: capitalize;" > Address:  <%= data.customerDetails.address %></div>
 			<div>Mobile:  <%= data.customerDetails.mobile.number %></div>
 			<div>Aadhar Number:  <%= data.customerDetails.aadharNumber %></div>
+		</div> -->
+		<div style="font-size:13px;float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
+			<div class="details-head"> Customer Details</div>
+			<div class="details" style="text-transform: capitalize;"> Name : Ashok H. M </div>
+			<div>Mobile: 9972702869</div>
 		</div>
 
-		<div style="float:right;width:20%;">
-			<img src="<%= data.customerDetails.image %>"  style="width:80px;height:80px;border:1px solid #ccc">
-		</div>
+		<!-- <div style="float:right;width:20%;">
+			<img src="http://localhost:3002/public/assets/images.jpeg"  style="width:80px;height:80px;border:1px solid #ccc">
+		</div> -->
 
 		<div style="font-size:13px;float:right;width:35%">
 			<div class="details-head"> Innvoice Details</div>
 			<div class="details"> Invoice Id :<%= data.customerDetails.name %> </div>
-			<div class="details" > Date : <%= new Date(data.createdAt).toDateString() %></div>
+			<div class="details" > Date : <%= new Date(data.disbursementAt).toDateString() %></div>
 			<div class="details"> Due Date : <%= new Date(data.dueDate).toDateString() %></div>
 		</div>
-		<% var netWeight = 0, grossWeight = 0; %>
+		<% var netWeight = 0, grossWeight = 0; totWeight = 0; %>
 
 		<div class="invoice-box" style="min-height: 300px">
 				<table cellpadding="0" cellspacing="0">
@@ -168,6 +173,13 @@
 						<td  style="text-align:right" >Net Weight</td>
 					</tr>
 						<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
+
+							<% 
+								totWeight = parseFloat(totWeight) + parseFloat(data.items[i].netWeight);
+
+								grossWeight = parseFloat(grossWeight) + parseFloat(data.items[i].grossWeight);
+							%>
+
 						<tr class="item">
 							<td><%= i+1 %> </td>
 								<td><%= data.items[i].name %> </td>
@@ -176,10 +188,8 @@
 								<td style="text-align:right"><%= data.items[i].purity %> </td>
 								<td style="text-align:right"><%= parseFloat(data.items[i].grossWeight).toFixed(3) %> </td>
 								<td style="text-align:right"><%= parseFloat(data.items[i].netWeight).toFixed(3) %> </td>
-								<% 
-									 netWeight = netWeight +  data.items[i].netWeight;
-									 grossWeight =  grossWeight + data.items[i].grossWeight;
-								%>
+								
+
 						</tr>
 						<% } } %>
 						<tr>
@@ -189,18 +199,26 @@
 							<td style="text-align:right"> </td>
 							<td style="text-align:right"> </td>
 							<td style="text-align:right"> <%= parseFloat(grossWeight).toFixed(3) %>  </td>
-							<td style="text-align:right"><%= parseFloat(netWeight).toFixed(3) %> </td>
+							<td style="text-align:right"><%= parseFloat(totWeight).toFixed(3) %> </td>
 						</tr>
 					
 			</table>
 			<div style="padding-top: 20px;font-size: 13px;"> Total Loan Amount : <%= data. loanAmount %> </div>
-			<div style="padding-top: 5px;font-size: 13px;"> Intrest Rate : <%= data.intrestRate %> </div>
-			<div style="padding-top:20px">
-			<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
-			<img   src='https://aws-bsr-bucket.s3.amazonaws.com/users/642b02d87ee702fa6d30adc5-1689853204231-1689853202363.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2HLM5XED7HGQM3PB%2F20230720%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230720T114006Z&X-Amz-Expires=6000&X-Amz-Signature=1223cc754332b4f6180a6967afe1f8a556209429b246d4602454f8f2b5147f96&X-Amz-SignedHeaders=host' style="
+			<div style="padding-top: 5px;font-size: 13px;"> Intrest Rate : <%= data.intrestRate %> % </div>
+			<!-- <div style="padding-top:20px">
+			
+
+			 <img   src="http://localhost:3002/public/assets/gold1.jpeg" style="
+				width: 120px;height:120px;float: left; padding-right: 20px;" />
+			
+
+			 <img   src="http://localhost:3002/public/assets/gold2.jpeg" style="
+				width: 120px;height:120px;float: left;" />
+			 </div> -->
+<% if (data && data.items.length) {  for (var i = 0; i < data.items.length; i++) { %>
+			<img   src="<%= data.items[i].image %>" style="
 				width: 100px;float: left;" />
 			 </div>
-
 			<% } } %>
 		</div>
 	
