@@ -68,7 +68,7 @@ const getDownloadableUrl = async (imgPath) => {
 		let options = {
 			Bucket: process.env.DEFAULT_AWS_BUCKET_NAME,
 			Key: imgPath,
-			Expires: 6000,
+			Expires: 60000000,
 		}
 		options = JSON.parse(JSON.stringify(options))
 
