@@ -31,6 +31,7 @@
 			.invoice-box table td {
 				padding: 5px;
 				vertical-align: top;
+				font-size: 11px;
 			}
 
 			.invoice-box table tr td:nth-child(2) {
@@ -51,11 +52,14 @@
 				padding-bottom: 40px;
 			}
 
+			.heading {
+				font-size: 11px;
+			}
 			.invoice-box table tr.heading td {
 				background: #eee;
 				border-bottom: 1px solid #ddd;
 				font-weight: bold;
-				font-size: 14px;
+				font-size: 12px;
 			}
 
 			.invoice-box table tr.details td {
@@ -133,7 +137,7 @@
 			<div>Mobile:  <%= data.customerDetails.mobile.number %></div>
 			<div>Aadhar Number:  <%= data.customerDetails.aadharNumber %></div>
 		</div> -->
-		<div style="font-size:13px;float:left;width:40%;padding-left:4%;margin-bottom: 50px;">
+		<div style="font-size:13px;float:left;width:39%;padding-left:1%;margin-bottom: 50px;">
 			<div class="details-head"> Customer Details</div>
 			<div class="details" style="text-transform: capitalize;"> Name : Ashok H. M </div>
 			<div>Mobile: 9972702869</div>
@@ -142,16 +146,23 @@
 		<!-- <div style="float:right;width:20%;">
 			<img src="http://localhost:3002/public/assets/images.jpeg"  style="width:80px;height:80px;border:1px solid #ccc">
 		</div> -->
-
-		<div style="font-size:13px;float:right;width:35%">
+	
+		<div style="font-size:13px;float:left;width:39%">
 			<div class="details-head"> Innvoice Details</div>
 			<div class="details"> Invoice Id :<%= data.customerDetails.name %> </div>
 			<div class="details" > Date : <%= new Date(data.disbursementAt).toDateString() %></div>
 			<div class="details"> Due Date : <%= new Date(data.dueDate).toDateString() %></div>
 		</div>
+		<div style="font-size:13px;float:right;width:20%;margin-bottom: 20px;">
+			<div style="min-width: 100%;border:1px solid #ccc;min-height: 100px;">
+				<img  src="<%= data.customerDetails.image %>" style="width:100%;" />
+			</div>
+
+		</div>
+		
 		<% var netWeight = 0, grossWeight = 0; totWeight = 0; %>
 
-		<div class="invoice-box" style="min-height: 300px">
+		<div class="invoice-box" style="min-height: 300px;">
 				<table cellpadding="0" cellspacing="0">
 				
 							
